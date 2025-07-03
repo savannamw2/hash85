@@ -14,7 +14,7 @@
  *        unordered_set           : A class that represents a hash
  *        unordered_set::iterator : An interator through hash
  * Author
- *    <Your name here>
+ *    Savanna W, Isabel W, Jenna R
  ************************************************************************/
 
 #pragma once
@@ -64,7 +64,16 @@ public:
    template <class Iterator>
    unordered_set(Iterator first, Iterator last)
    {
+   // set num elements
+   numElements = 0;
+
+   //iterate from first to last and insert each element
+   while (first != last)
+   {
+      insert(*first);
+      ++first;
    }
+}
 
    //
    // Assign
