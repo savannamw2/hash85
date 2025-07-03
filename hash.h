@@ -231,10 +231,26 @@ inline unordered_set& unordered_set::operator=(unordered_set& rhs)
 }
 inline unordered_set& unordered_set::operator=(unordered_set&& rhs) noexcept
 {
+   //move the rhs
+   numElements = rhs.numElements;
+   for (int i = 0; i < 10; ++i)
+   {
+      buckets[i] = std::move(rhs.buckets[i]);
+      rhs.buckets[i] = HASH_EMPTY_VALUE; // clear the moved-from bucket
+   }
+   rhs.numElements = 0; // clear the moved-from size
    return *this;
 }
 inline unordered_set& unordered_set::operator=(const std::initializer_list<int>& il)
 {
+   // clear the current unordered set
+   clear();
+
+   // insert each element from the initializer list
+   for (const int& value : il)
+   {
+      insert(value);
+   }
    return *this;
 }
 
