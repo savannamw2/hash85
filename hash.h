@@ -42,18 +42,25 @@ public:
    // Construct
    //
    
-   unordered_set()
+unordered_set()
+{  
+   //set numElements to 0 and choose a value for buckets under 10
+   numElements = 0;
+   buckets[8];
+   for (int i = 0; i < 10; ++i)
    {
-      numElements = 0;
-      buckets[8];
+      buckets[i] = HASH_EMPTY_VALUE; // initialize all buckets to empty
+   }
    }
    unordered_set(unordered_set&  rhs) 
    {
-      
+      //copy the rhs
       *this = rhs;
    }
    unordered_set(unordered_set&& rhs) noexcept
    {
+      //move the rhs
+      *this = std::move(rhs);
    }
    template <class Iterator>
    unordered_set(Iterator first, Iterator last)
@@ -194,6 +201,13 @@ private:
  ****************************************/
 inline unordered_set& unordered_set::operator=(unordered_set& rhs)
 {
+   //set numElements to rhs value
+   numElements = rhs.numElements;
+   //iterate through buckets and copy each
+   for (int i = 0; i < 10; ++i)
+   {
+      buckets[i] = rhs.buckets[i];
+   }
    return *this;
 }
 inline unordered_set& unordered_set::operator=(unordered_set&& rhs) noexcept
