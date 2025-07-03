@@ -41,9 +41,8 @@ public:
    //
    // Construct
    //
-   
-unordered_set()
-{  
+   unordered_set()
+   {
    //set numElements to 0 and choose a value for buckets under 10
    numElements = 0;
    buckets[8];
@@ -52,7 +51,7 @@ unordered_set()
       buckets[i] = HASH_EMPTY_VALUE; // initialize all buckets to empty
    }
    }
-   unordered_set(unordered_set&  rhs) 
+   unordered_set(unordered_set&  rhs)
    {
       //copy the rhs
       *this = rhs;
@@ -110,21 +109,23 @@ unordered_set()
    // Status
    //
    size_t size() const 
-   { 
-      return 99;      
+   {
+       //numElements is our size
+       return numElements;
    }
    bool empty() const 
    { 
-      return false; 
+       return numElements == 0;
    }
    size_t bucket_count() const 
    { 
-      return 99;   
+       return 10;
    }
    size_t bucket_size(size_t i) const
-   {
-      return 99;
-   }
+    {
+
+        return 99;
+    }
 
 private:
  
@@ -143,14 +144,17 @@ class unordered_set::iterator
 public:
    // 
    // Construct
-   iterator()  
-   {  
-   }
+   iterator() : pBucket(nullptr), pBucketEnd(nullptr) {}
+    
    iterator(int * pBucket, int * pBucketEnd)
    {
+       this->pBucket = pBucket;
+       this->pBucketEnd = pBucketEnd;
    }
    iterator(const iterator& rhs) 
-   { 
+   {
+       pBucket = rhs.pBucket;
+       pBucketEnd = rhs.pBucketEnd;
    }
 
    //
@@ -158,6 +162,8 @@ public:
    //
    iterator& operator = (const iterator& rhs)
    {
+       pBucket = rhs.pBucket;
+       pBucketEnd = rhs.pBucketEnd;
       return *this;
    }
 
@@ -165,12 +171,12 @@ public:
    // Compare
    //
    bool operator != (const iterator& rhs) const 
-   { 
-      return true;
+   {
+       return pBucket != rhs.pBucket;
    }
    bool operator == (const iterator& rhs) const 
    { 
-      return true;
+       return pBucket == rhs.pBucket;
    }
 
    // 
@@ -178,7 +184,7 @@ public:
    //
    int& operator * ()
    {
-      return *(new int(99));
+       return *pBucket;  // return first item in the list
    }
 
    //
@@ -201,14 +207,14 @@ private:
  ****************************************/
 inline unordered_set& unordered_set::operator=(unordered_set& rhs)
 {
-   //set numElements to rhs value
-   numElements = rhs.numElements;
-   //iterate through buckets and copy each
-   for (int i = 0; i < 10; ++i)
-   {
-      buckets[i] = rhs.buckets[i];
-   }
-   return *this;
+    //set numElements to rhs value
+      numElements = rhs.numElements;
+      //iterate through buckets and copy each
+      for (int i = 0; i < 10; ++i)
+      {
+         buckets[i] = rhs.buckets[i];
+      }
+      return *this;
 }
 inline unordered_set& unordered_set::operator=(unordered_set&& rhs) noexcept
 {
