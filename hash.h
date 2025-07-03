@@ -86,7 +86,7 @@ public:
    // Access
    size_t bucket(const int & t)
    {
-      return 99;
+       return std::abs(t) % 10;
    }
    iterator find(const int& t);
 
@@ -102,6 +102,11 @@ public:
    //
    void clear() noexcept
    {
+       for (int i = 0; i < 10; ++i)
+       {
+          buckets[i] = HASH_EMPTY_VALUE;
+       }
+       numElements = 0;
    }
    iterator erase(const int& t);
 
@@ -123,8 +128,8 @@ public:
    }
    size_t bucket_size(size_t i) const
     {
-
-        return 99;
+        assert(i < 10);  // safety check
+        return (buckets[i] != HASH_EMPTY_VALUE) ? 1 : 0;
     }
 
 private:
@@ -148,11 +153,13 @@ public:
     
    iterator(int * pBucket, int * pBucketEnd)
    {
+       //Give pBucket and pBucket the values
        this->pBucket = pBucket;
        this->pBucketEnd = pBucketEnd;
    }
    iterator(const iterator& rhs) 
    {
+       //copy the rhs values
        pBucket = rhs.pBucket;
        pBucketEnd = rhs.pBucketEnd;
    }
@@ -172,10 +179,12 @@ public:
    //
    bool operator != (const iterator& rhs) const 
    {
+       //Compare to see if they are not equal
        return pBucket != rhs.pBucket;
    }
    bool operator == (const iterator& rhs) const 
-   { 
+   {
+       //Compare to see if they are equal.
        return pBucket == rhs.pBucket;
    }
 
@@ -193,7 +202,9 @@ public:
    iterator& operator ++ ();
    iterator operator ++ (int postfix)
    {
-      return *this;
+       iterator temp = *this;  // save current position
+        ++(*this);              // call prefix increment to advance
+        return temp;            // return the old value
    }
 
 private:
@@ -233,11 +244,18 @@ inline unordered_set& unordered_set::operator=(const std::initializer_list<int>&
 inline typename unordered_set::iterator  unordered_set::begin()
 {
    // find the first non-empty bucket
-   return unordered_set::iterator();
+    int* pBegin = buckets;
+    int* pEnd = buckets + 10;
+
+    // skip empty buckets
+    while (pBegin != pEnd && *pBegin == HASH_EMPTY_VALUE)
+       ++pBegin;
+
+    return iterator(pBegin, pEnd);
 }
 inline typename unordered_set::iterator  unordered_set::end()
 {
-   return unordered_set::iterator();
+    return iterator(buckets + 10, buckets + 10);
 }
 
 
