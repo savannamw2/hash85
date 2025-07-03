@@ -74,6 +74,8 @@ public:
    unordered_set& operator=(const std::initializer_list<int>& il);
    void swap(unordered_set& rhs)
    {
+      std::swap(numElements, rhs.numElements);
+      std::swap(buckets, rhs.buckets);
    }
 
    // 
@@ -297,8 +299,23 @@ inline typename unordered_set::iterator unordered_set::find(const int& t)
  ****************************************/
 inline typename unordered_set::iterator & unordered_set::iterator::operator ++ ()
 {
+   
+   // only advance if we are not already at the end.
+   if (pBucket == pBucketEnd)
+      return *this;
+   
+   // Advance the list iterator. If we are not at the end, then we are done.
+   ++pBucket;
+   
+   //We are at the end of the list. Find the next bucket.
+   while (pBucket != pBucketEnd && *pBucket == HASH_EMPTY_VALUE)
+   {
+      ++pBucket;
+   }
+   
    return *this;
 }
+
 
 /*****************************************
  * SWAP
@@ -306,6 +323,7 @@ inline typename unordered_set::iterator & unordered_set::iterator::operator ++ (
  ****************************************/
 inline void swap(unordered_set& lhs, unordered_set& rhs)
 {
+   lhs.swap(rhs);
 }
 
 }
