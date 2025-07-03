@@ -312,11 +312,36 @@ inline typename unordered_set::iterator unordered_set::erase(const int& t)
  ****************************************/
 inline custom::unordered_set::iterator unordered_set::insert(const int& t)
 {
-   return unordered_set::iterator();
+   // find the bucket where the new element is to reside
+   size_t index = bucket(t);
+
+   // Check if the element already exists
+   if (buckets[index] == t)
+   {
+      return iterator(&buckets[index], &buckets[10]); // Element already exists, return iterator to it
+   }
+
+   // If the bucket is empty, insert the new element
+   if (buckets[index] == HASH_EMPTY_VALUE)
+   {
+      buckets[index] = t; // Insert the element
+      ++numElements;      // Increment the number of elements
+      return iterator(&buckets[index], &buckets[10]); // Return an iterator to the newly inserted element
+   }
+   else
+   {
+      buckets[index] = t; // Insert the element
+      return iterator(&buckets[index], &buckets[10]);
+   } // Return an iterator to the newly inserted element
 }
 
 inline void unordered_set::insert(const std::initializer_list<int> & il)
 {
+   // Insert each element from the initializer list
+   for (const int& value : il)
+   {
+      insert(value);
+   }
 }
 
 /*****************************************
