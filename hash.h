@@ -74,8 +74,8 @@ public:
    unordered_set& operator=(const std::initializer_list<int>& il);
    void swap(unordered_set& rhs)
    {
-      std::swap(numElements, rhs.numElements);
-      std::swap(buckets, rhs.buckets);
+       std::swap(numElements, rhs.numElements);
+       std::swap(buckets, rhs.buckets);
    }
 
    // 
@@ -267,7 +267,26 @@ inline typename unordered_set::iterator  unordered_set::end()
  ****************************************/
 inline typename unordered_set::iterator unordered_set::erase(const int& t)
 {
-   return unordered_set::iterator();
+    // Compute the bucket index using the hash function
+    size_t i = std::abs(t) % 10;
+
+    // If the bucket contains the value we want to remove
+    if (buckets[i] == t)
+    {
+       // Mark the bucket as empty
+       buckets[i] = HASH_EMPTY_VALUE;
+
+       // Decrement the element count
+       --numElements;
+
+       // Return iterator pointing to the next valid element
+       iterator it(&buckets[i + 1], buckets + 10);
+       ++it;  // this will skip empty buckets if needed
+       return it;
+    }
+
+    // If the value is not found, return end()
+    return end();
 }
 
 
@@ -290,7 +309,20 @@ inline void unordered_set::insert(const std::initializer_list<int> & il)
  ****************************************/
 inline typename unordered_set::iterator unordered_set::find(const int& t)
 {
-   return unordered_set::iterator();
+    // Compute which bucket this value would go into
+    size_t i = std::abs(t) % 10;
+
+    // If the value is found in the expected bucket
+    if (buckets[i] == t)
+    {
+       // Return an iterator pointing to that bucket
+       return iterator(&buckets[i], buckets + 10);
+    }
+    else
+    {
+       // Otherwise, the value is not in the set
+       return end();
+    }
 }
 
 /*****************************************
@@ -299,23 +331,21 @@ inline typename unordered_set::iterator unordered_set::find(const int& t)
  ****************************************/
 inline typename unordered_set::iterator & unordered_set::iterator::operator ++ ()
 {
-   
-   // only advance if we are not already at the end.
-   if (pBucket == pBucketEnd)
-      return *this;
-   
-   // Advance the list iterator. If we are not at the end, then we are done.
-   ++pBucket;
-   
-   //We are at the end of the list. Find the next bucket.
-   while (pBucket != pBucketEnd && *pBucket == HASH_EMPTY_VALUE)
-   {
-      ++pBucket;
-   }
-   
-   return *this;
+    // only advance if we are not already at the end.
+    if (pBucket == pBucketEnd)
+       return *this;
+    
+    // Advance the list iterator. If we are not at the end, then we are done.
+    ++pBucket;
+    
+    //We are at the end of the list. Find the next bucket.
+    while (pBucket != pBucketEnd && *pBucket == HASH_EMPTY_VALUE)
+    {
+       ++pBucket;
+    }
+    
+    return *this;
 }
-
 
 /*****************************************
  * SWAP
@@ -323,7 +353,7 @@ inline typename unordered_set::iterator & unordered_set::iterator::operator ++ (
  ****************************************/
 inline void swap(unordered_set& lhs, unordered_set& rhs)
 {
-   lhs.swap(rhs);
+    lhs.swap(rhs);
 }
 
 }
